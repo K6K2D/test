@@ -1,0 +1,107 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>get started with three.js</title>
+</head>
+<body>
+ 
+ 
+
+<script src="three.min.js"></script>
+<script>
+var main = function () {
+  var scene = new THREE.Scene();
+ 
+  var width  = 600;
+  var height = 400;
+  var fov    = 60;
+  var aspect = width / height;
+  var near   = 1;
+  var far    = 1000;
+  var camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
+  camera.position.set( 0, 0, 50 );
+ 
+  var renderer = new THREE.WebGLRenderer();
+  renderer.setSize( width, height );
+  document.body.appendChild( renderer.domElement );
+ 
+  var directionalLight = new THREE.DirectionalLight( 0xffffff );
+  directionalLight.position.set( 0, 0.7, 0.7 );
+  scene.add( directionalLight );
+ 
+
+
+var xi = [-10, 10, 10, -10];
+var yi = [-10, -10, 10, 10];
+var zi = [0, 0, 0, 0];
+var si = [2, 4, 6, 8];
+var x1234canter = (xi[0]+xi[1])/2;
+var y1234canter = (yi[0]+yi[3])/2;
+var z1234canter = zi[0];
+var s1234canter = 8;
+
+
+////////////////////////////////////////////4分の一三角形 center,0,1
+var xi01 = [x1234canter, xi[0], xi[1]];
+var yi01 = [y1234canter, yi[0], yi[1]];
+var zi01 = [z1234canter, zi[0], zi[1]];
+var si01 = [s1234canter, si[0], si[1]];
+var geomtri1 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri1.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/Math.max(si[0],si[1],si[2],si[3]), 1, 0.5);        
+        geomtri1.colors.push( color );
+        }
+
+//////点打つよう
+var trimaterial1 = new THREE.ParticleBasicMaterial( {
+    size : 1,// particleのサイズ
+    vertexColors : true,
+  } );
+var tri1 = new THREE.ParticleSystem(geomtri1, trimaterial1);
+  scene.add(tri1);
+  tri1.position.set(-10,0,0);
+
+
+
+//////メッシュかぶせるよう
+geomtri1.faces.push(new THREE.Face3(0, 1, 2));
+
+var trimaterial1Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri1mesh =  new THREE.Mesh(geomtri1,trimaterial1Mesh);
+  scene.add(tri1mesh);
+  tri1mesh.position.set(-10,0,0);
+
+///////////////////4分の一三角形 center,0,1
+
+
+
+
+
+
+
+
+
+
+
+
+
+ renderer.render( scene, camera );
+
+
+
+};
+ 
+window.addEventListener( 'DOMContentLoaded', main, false );
+</script>
+
+
+</body>
+</html>
