@@ -51,10 +51,13 @@ var geomtri1 = new THREE.Geometry();
 for (var i = 0; i < 3; i++) {
       geomtri1.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
     }
+
+    
+    geomtri1.faces.push(new THREE.Face3(0, 1, 2));
 for (var i = 0; i < 3; i++) {
         color = new THREE.Color(0xffffff);
         color.setHSL(si01[i]/Math.max(si[0],si[1],si[2],si[3]), 1, 0.5);        
-        geomtri1.colors.push( color );
+        geomtri1.faces[0].vertexColors.push( color );
         }
 
 //////点打つよう
@@ -69,7 +72,6 @@ var tri1 = new THREE.ParticleSystem(geomtri1, trimaterial1);
 
 
 //////メッシュかぶせるよう
-geomtri1.faces.push(new THREE.Face3(0, 1, 2));
 
 var trimaterial1Mesh = new THREE.MeshBasicMaterial({
   vertexColors: THREE.VertexColors,
