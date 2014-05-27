@@ -80,6 +80,101 @@ var tri1mesh =  new THREE.Mesh(geomtri1,trimaterial1Mesh);
 
 
 
+///////////////////4分の一三角形 center,1,2
+var xi12 = [x1234canter, xi[1], xi[2]];
+var yi12 = [y1234canter, yi[1], yi[2]];
+var zi12 = [z1234canter, zi[1], zi[2]];
+var si12 = [s1234canter, si[1], si[2]];
+var geomtri2 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri2.vertices.push(new THREE.Vector3(xi12[i], yi12[i], zi12[i]));
+    }
+//geomtri2.faces.push(new THREE.Face3(1, 2, 3));
+//geomtri2.faces[1].vertexColors.push(new THREE.Face3(0, 1, 2));
+    geomtri2.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si12[i]/Math.max(si[0],si[1],si[2],si[3]), 1, 0.5);        
+        geomtri2.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial2Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri2mesh =  new THREE.Mesh(geomtri2,trimaterial2Mesh);
+  scene.add(tri2mesh);
+  tri2mesh.position.set(-5,0,0);
+
+
+///////////////////4分の一三角形 center,1,2
+
+
+///////////////////4分の一三角形 center,2,3
+var xi23 = [x1234canter, xi[2], xi[3]];
+var yi23 = [y1234canter, yi[2], yi[3]];
+var zi23 = [z1234canter, zi[2], zi[3]];
+var si23 = [s1234canter, si[2], si[3]];
+var geomtri3 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri3.vertices.push(new THREE.Vector3(xi23[i], yi23[i], zi23[i]));
+    }
+
+    geomtri3.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si23[i]/Math.max(si[0],si[1],si[2],si[3]), 1, 0.5);        
+        geomtri3.faces[0].vertexColors.push( color );
+        }
+
+//////メッシュかぶせるよう
+
+var trimaterial3Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri3mesh =  new THREE.Mesh(geomtri3,trimaterial3Mesh);
+  scene.add(tri3mesh);
+  tri3mesh.position.set(-5,5,0);
+
+///////////////////4分の一三角形  center,2,3
+
+///////////////////4分の一三角形 center,2,3
+var xi30 = [x1234canter, xi[3], xi[0]];
+var yi30 = [y1234canter, yi[3], yi[0]];
+var zi30 = [z1234canter, zi[3], zi[0]];
+var si30 = [s1234canter, si[3], si[0]];
+var geomtri4 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri4.vertices.push(new THREE.Vector3(xi30[i], yi30[i], zi30[i]));
+    }
+    geomtri4.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si30[i]/Math.max(si[0],si[1],si[2],si[3]), 1, 0.5);        
+        geomtri4.faces[0].vertexColors.push( color );
+        }
+
+//////メッシュかぶせるよう
+
+var trimaterial4Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri4mesh =  new THREE.Mesh(geomtri4,trimaterial4Mesh);
+  scene.add(tri4mesh);
+  tri4mesh.position.set(-10,5,0);
+///////////////////4分の一三角形  center,2,3
+
+
+
+
+
+
 
 
 
