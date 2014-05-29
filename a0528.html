@@ -1,0 +1,2918 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>get started with three.js</title>
+</head>
+<body>
+ 
+ 
+
+<script src="three.min.js"></script>
+<script>
+var main = function () {
+  var scene = new THREE.Scene();
+ 
+  var width  = 600;
+  var height = 400;
+  var fov    = 60;
+  var aspect = width / height;
+  var near   = 1;
+  var far    = 1000;
+  var camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
+  camera.position.set( 0, 0, 80 );
+ 
+  var renderer = new THREE.WebGLRenderer();
+  renderer.setSize( width, height );
+  document.body.appendChild( renderer.domElement );
+ 
+  var directionalLight = new THREE.DirectionalLight( 0xffffff );
+  directionalLight.position.set( 0, 0.7, 0.7 );
+  scene.add( directionalLight );
+ 
+
+
+
+var xi = [-10, 10, 10, -10, -10, 10, 10, -10];
+var yi = [-10, -10, 10, 10, -10, -10, 10, 10];
+var zi = [0, 0, 0, 0, 10, 10, 10, 10];
+var si = [2, 4, 6, 8, 1, 3, 4, 7];
+var smax = Math.max(si[0],si[1],si[2],si[3],si[4],si[5],si[6],si[7]);
+//////////////6面の中点6点の座標
+var x1234canter = (xi[0]+xi[1])/2;
+var y1234canter = (yi[0]+yi[3])/2;
+var z1234canter = zi[0];
+var s1234canter = (si[0]+si[1]+si[2]+si[3])/4;
+var x4567canter = (xi[0]+xi[1])/2;
+var y4567canter = (yi[0]+yi[3])/2;
+var z4567canter = zi[4];//@
+var s4567canter = (si[4]+si[5]+si[6]+si[7])/4;
+
+var x0154canter = (xi[0]+xi[1])/2;
+var y0154canter = yi[0];
+var z0154canter = (zi[0]+zi[4])/2;
+var s0154canter = (si[0]+si[1]+si[5]+si[4])/4;
+var x2376canter = (xi[0]+xi[1])/2;
+var y2376canter = yi[3];//@
+var z2376canter = (zi[0]+zi[4])/2;
+var s2376canter = (si[2]+si[3]+si[7]+si[6])/4;
+
+var x1265canter = xi[1];
+var y1265canter = (yi[0]+yi[3])/2;
+var z1265canter = (zi[0]+zi[4])/2;
+var s1265canter = (si[1]+si[2]+si[6]+si[5])/4;
+var x3047canter = xi[0];//@
+var y3047canter = (yi[0]+yi[3])/2;
+var z3047canter = (zi[0]+zi[4])/2;
+var s3047canter = (si[3]+si[0]+si[4]+si[7])/4;
+
+
+
+var t0 = 0.5;
+var s0 = 0;
+var ti = [0,1];
+
+ var p = [-1,1,1,-1,-1,1,1,-1,-1,1,1,-1,-1,1,1,-1];
+ var q = [-1,-1,1,1,-1,-1,1,1,-1,-1,1,1,-1,-1,1,1];
+ var r = [-1,-1,-1,-1,1,1,1,1,-1,-1,-1,-1,1,1,1,1];
+ var t = [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1];
+ //var s = [1,1,1,1,1,1,1,1];
+
+ //var x = [-3,3,1,-4,-1,5,1,-1,-3,3,1,-4,-1,5,1,-1];//場所は一緒のハズ
+ //var y = [-1,-3,1,3,-1,-1,1,6,-1,-3,1,3,-1,-1,1,6];
+ //var z = [-1,-1,-6,-1,1,5,1,1,-1,-1,-6,-1,1,5,1,1];
+ //var t = [0,0,0,0,0,0,0,0,24,24,24,24,24,24,24,24];
+ //var s = [1,1,3,1,1,3,1,1,1,1,3,1,1,3,1,1];//ｓだけ違うはず
+
+
+
+var box1positionx = -50;
+var box2positionx;
+var box3positionx;
+
+////////////////////////////////////////////4分の一三角形 center,0,1
+var xi01 = [x1234canter, xi[0], xi[1]];
+var yi01 = [y1234canter, yi[0], yi[1]];
+var zi01 = [z1234canter, zi[0], zi[1]];
+var si01 = [s1234canter, si[0], si[1]];
+var geomtri1 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri1.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri1.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri1.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial1Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri1mesh =  new THREE.Mesh(geomtri1,trimaterial1Mesh);
+  scene.add(tri1mesh);
+  tri1mesh.position.set(box1positionx - 2,0,0);
+
+///////////////////4分の一三角形 center,0,1
+
+///////////////////4分の一三角形 center,1,2
+var xi12 = [x1234canter, xi[1], xi[2]];
+var yi12 = [y1234canter, yi[1], yi[2]];
+var zi12 = [z1234canter, zi[1], zi[2]];
+var si12 = [s1234canter, si[1], si[2]];
+var geomtri2 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri2.vertices.push(new THREE.Vector3(xi12[i], yi12[i], zi12[i]));
+    }
+//geomtri2.faces.push(new THREE.Face3(1, 2, 3));
+//geomtri2.faces[1].vertexColors.push(new THREE.Face3(0, 1, 2));
+    geomtri2.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si12[i]/smax, 1, 0.5);        
+        geomtri2.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial2Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri2mesh =  new THREE.Mesh(geomtri2,trimaterial2Mesh);
+  scene.add(tri2mesh);
+  tri2mesh.position.set(box1positionx,0,0);
+
+
+///////////////////4分の一三角形 center,1,2
+
+
+///////////////////4分の一三角形 center,2,3
+var xi23 = [x1234canter, xi[2], xi[3]];
+var yi23 = [y1234canter, yi[2], yi[3]];
+var zi23 = [z1234canter, zi[2], zi[3]];
+var si23 = [s1234canter, si[2], si[3]];
+var geomtri3 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri3.vertices.push(new THREE.Vector3(xi23[i], yi23[i], zi23[i]));
+    }
+
+    geomtri3.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si23[i]/smax, 1, 0.5);        
+        geomtri3.faces[0].vertexColors.push( color );
+        }
+
+//////メッシュかぶせるよう
+
+var trimaterial3Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri3mesh =  new THREE.Mesh(geomtri3,trimaterial3Mesh);
+  scene.add(tri3mesh);
+  tri3mesh.position.set(box1positionx,0,0);
+
+///////////////////4分の一三角形  center,2,3
+
+///////////////////4分の一三角形 center,2,3
+var xi30 = [x1234canter, xi[3], xi[0]];
+var yi30 = [y1234canter, yi[3], yi[0]];
+var zi30 = [z1234canter, zi[3], zi[0]];
+var si30 = [s1234canter, si[3], si[0]];
+var geomtri4 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri4.vertices.push(new THREE.Vector3(xi30[i], yi30[i], zi30[i]));
+    }
+    geomtri4.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si30[i]/smax, 1, 0.5);        
+        geomtri4.faces[0].vertexColors.push( color );
+        }
+
+//////メッシュかぶせるよう
+
+var trimaterial4Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri4mesh =  new THREE.Mesh(geomtri4,trimaterial4Mesh);
+  scene.add(tri4mesh);
+  tri4mesh.position.set(box1positionx,0,0);
+///////////////////4分の一三角形  center,2,3
+
+renderer.render( scene, camera );
+
+
+
+
+/////////////////////////////////////////////////////////////////4分の一三角形 center,0,1 4567
+var xi01 = [x4567canter, xi[0], xi[1]];
+var yi01 = [y4567canter, yi[0], yi[1]];
+var zi01 = [z4567canter, zi[4], zi[5]];///ZとSのみ本来の場所の
+var si01 = [s4567canter, si[4], si[5]];
+var geomtri45671 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri45671.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri45671.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri45671.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial45671Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri45671mesh =  new THREE.Mesh(geomtri45671,trimaterial45671Mesh);
+  scene.add(tri45671mesh);
+  tri45671mesh.position.set(box1positionx,0,0);
+
+renderer.render( scene, camera );
+
+///////////////////4分の一三角形 center,0,1 4567
+///////////////////4分の一三角形 center,1,2
+var xi12 = [x4567canter, xi[1], xi[2]];
+var yi12 = [y4567canter, yi[1], yi[2]];
+var zi12 = [z4567canter, zi[5], zi[6]];
+var si12 = [s4567canter, si[5], si[6]];
+var geomtri45672 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri45672.vertices.push(new THREE.Vector3(xi12[i], yi12[i], zi12[i]));
+    }
+//geomtri2.faces.push(new THREE.Face3(1, 2, 3));
+//geomtri2.faces[1].vertexColors.push(new THREE.Face3(0, 1, 2));
+    geomtri45672.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si12[i]/smax, 1, 0.5);        
+        geomtri45672.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial45672Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri45672mesh =  new THREE.Mesh(geomtri45672,trimaterial45672Mesh);
+  scene.add(tri45672mesh);
+  tri45672mesh.position.set(box1positionx,0,0);
+
+
+///////////////////4分の一三角形 center,1,2
+
+///////////////////4分の一三角形 center,2,3
+var xi23 = [x4567canter, xi[2], xi[3]];
+var yi23 = [y4567canter, yi[2], yi[3]];
+var zi23 = [z4567canter, zi[6], zi[7]];
+var si23 = [s4567canter, si[6], si[7]];
+var geomtri45673 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri45673.vertices.push(new THREE.Vector3(xi23[i], yi23[i], zi23[i]));
+    }
+
+    geomtri45673.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si23[i]/smax, 1, 0.5);        
+        geomtri45673.faces[0].vertexColors.push( color );
+        }
+
+//////メッシュかぶせるよう
+
+var trimaterial45673Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri45673mesh =  new THREE.Mesh(geomtri45673,trimaterial45673Mesh);
+  scene.add(tri45673mesh);
+  tri45673mesh.position.set(box1positionx,0,0);
+
+///////////////////4分の一三角形  center,2,3
+///////////////////4分の一三角形 center,2,3
+var xi30 = [x4567canter, xi[3], xi[0]];
+var yi30 = [y4567canter, yi[3], yi[0]];
+var zi30 = [z4567canter, zi[7], zi[4]];
+var si30 = [s4567canter, si[7], si[4]];
+var geomtri45674 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri45674.vertices.push(new THREE.Vector3(xi30[i], yi30[i], zi30[i]));
+    }
+    geomtri45674.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si30[i]/smax, 1, 0.5);        
+        geomtri45674.faces[0].vertexColors.push( color );
+        }
+
+//////メッシュかぶせるよう
+var trimaterial45674Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri45674mesh =  new THREE.Mesh(geomtri45674,trimaterial45674Mesh);
+  scene.add(tri45674mesh);
+  tri45674mesh.position.set(box1positionx,0,0);
+///////////////////4分の一三角形  center,2,3
+renderer.render( scene, camera );
+
+
+////////////////////////////////////////////////////////////////////4分の一三角形 center,0,1 0154
+var xi01 = [x0154canter, xi[0], xi[1]];
+var yi01 = [y0154canter, yi[0], yi[1]];
+var zi01 = [z0154canter, zi[0], zi[1]];
+var si01 = [s0154canter, si[0], si[1]];
+var geomtri01541 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri01541.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri01541.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri01541.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial0154Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri01541mesh =  new THREE.Mesh(geomtri01541,trimaterial0154Mesh);
+  scene.add(tri01541mesh);
+  tri01541mesh.position.set(box1positionx,0,0);
+
+///////////////////4分の一三角形 center,0,1
+///////////////////////////////////////////////4分の一三角形 center,0,1 0154 2
+var xi01 = [x0154canter, xi[1], xi[5]];///5は１とおなじ
+var yi01 = [y0154canter, yi[1], yi[5]];//5は１とおなじ
+var zi01 = [z0154canter, zi[1], zi[5]];
+var si01 = [s0154canter, si[1], si[5]];
+var geomtri01542 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri01542.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri01542.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri01542.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial01542Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri01542mesh =  new THREE.Mesh(geomtri01542,trimaterial01542Mesh);
+  scene.add(tri01542mesh);
+  tri01542mesh.position.set(box1positionx,0,0);
+
+///////////////////4分の一三角形 center,0,1
+ ///////////////////////////////////////////////4分の一三角形 center,0,1 0154 3
+var xi01 = [x0154canter, xi[5], xi[4]];///
+var yi01 = [y0154canter, yi[5], yi[4]];//5は4とおなじ　ｙとｚはおなじ
+var zi01 = [z0154canter, zi[5], zi[4]];
+var si01 = [s0154canter, si[5], si[4]];
+var geomtri01543 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri01543.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri01543.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri01543.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial01543Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri01543mesh =  new THREE.Mesh(geomtri01543,trimaterial01543Mesh);
+  scene.add(tri01543mesh);
+  tri01543mesh.position.set(box1positionx,0,0);
+
+///////////////////4分の一三角形 center,0,1
+ ///////////////////////////////////////////////4分の一三角形 center,0,1 0154 4
+var xi01 = [x0154canter, xi[4], xi[0]];///
+var yi01 = [y0154canter, yi[4], yi[0]];//5は4とおなじ　ｙとｚはおなじ
+var zi01 = [z0154canter, zi[4], zi[0]];
+var si01 = [s0154canter, si[4], si[0]];
+var geomtri01544 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri01544.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri01544.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri01544.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial01544Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri01544mesh =  new THREE.Mesh(geomtri01544,trimaterial01544Mesh);
+  scene.add(tri01544mesh);
+  tri01544mesh.position.set(box1positionx,0,0);
+
+///////////////////4分の一三角形 center,0,1
+    renderer.render( scene, camera );
+
+
+//////////////////////////////////////////////////////////////////////////////////4分の一三角形 center,0,1 2376
+var xi01 = [x2376canter, xi[2], xi[3]];
+var yi01 = [y2376canter, yi[2], yi[3]];
+var zi01 = [z2376canter, zi[2], zi[3]];
+var si01 = [s2376canter, si[2], si[3]];
+var geomtri23761 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri23761.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri23761.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri23761.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial23761Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri23761mesh =  new THREE.Mesh(geomtri23761,trimaterial23761Mesh);
+  scene.add(tri23761mesh);
+  tri23761mesh.position.set(box1positionx,0,0);
+
+///////////////////4分の一三角形  center,0,1 2376
+var xi01 = [x2376canter, xi[3], xi[7]];
+var yi01 = [y2376canter, yi[3], yi[7]];
+var zi01 = [z2376canter, zi[3], zi[7]];
+var si01 = [s2376canter, si[3], si[7]];
+var geomtri23762 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri23762.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri23762.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri23762.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial23762Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri23762mesh =  new THREE.Mesh(geomtri23762,trimaterial23762Mesh);
+  scene.add(tri23762mesh);
+  tri23762mesh.position.set(box1positionx,0,0);
+///////////////////4分の一三角形  center,0,1 2376
+var xi01 = [x2376canter, xi[7], xi[6]];
+var yi01 = [y2376canter, yi[7], yi[6]];
+var zi01 = [z2376canter, zi[7], zi[6]];
+var si01 = [s2376canter, si[7], si[6]];
+var geomtri23763 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri23763.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri23763.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri23763.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial23763Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri23763mesh =  new THREE.Mesh(geomtri23763,trimaterial23763Mesh);
+  scene.add(tri23763mesh);
+  tri23763mesh.position.set(box1positionx,0,0);
+///////////////////4分の一三角形 center,0,1
+///////////////////4分の一三角形  center,0,1 2376
+var xi01 = [x2376canter, xi[6], xi[2]];
+var yi01 = [y2376canter, yi[6], yi[2]];
+var zi01 = [z2376canter, zi[6], zi[2]];
+var si01 = [s2376canter, si[6], si[2]];
+var geomtri23764 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri23764.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri23764.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri23764.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial23764Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri23764mesh =  new THREE.Mesh(geomtri23764,trimaterial23764Mesh);
+  scene.add(tri23764mesh);
+  tri23764mesh.position.set(box1positionx,0,0);
+///////////////////4分の一三角形 center,0,1
+  renderer.render( scene, camera );
+
+//////////////////////////////////////////////////////////////////////////////////4分の一三角形 center,0,1 1265
+var xi01 = [x1265canter, xi[1], xi[2]];
+var yi01 = [y1265canter, yi[1], yi[2]];
+var zi01 = [z1265canter, zi[1], zi[2]];
+var si01 = [s1265canter, si[1], si[2]];
+var geomtri12651 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri12651.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri12651.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri12651.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial12651Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri12651mesh =  new THREE.Mesh(geomtri12651,trimaterial12651Mesh);
+  scene.add(tri12651mesh);
+  tri12651mesh.position.set(box1positionx,0,0);
+///////////////////4分の一三角形 center,0,1
+var xi01 = [x1265canter, xi[2], xi[6]];
+var yi01 = [y1265canter, yi[2], yi[6]];
+var zi01 = [z1265canter, zi[2], zi[6]];
+var si01 = [s1265canter, si[2], si[6]];
+var geomtri12652 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri12652.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri12652.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri12652.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial12652Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri12652mesh =  new THREE.Mesh(geomtri12652,trimaterial12652Mesh);
+  scene.add(tri12652mesh);
+  tri12652mesh.position.set(box1positionx,0,0);
+///////////////////4分の一三角形 center,0,1
+///////////////////4分の一三角形 center,0,1
+var xi01 = [x1265canter, xi[6], xi[5]];
+var yi01 = [y1265canter, yi[6], yi[5]];
+var zi01 = [z1265canter, zi[6], zi[5]];
+var si01 = [s1265canter, si[6], si[5]];
+var geomtri12653 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri12653.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri12653.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri12653.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial12653Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri12653mesh =  new THREE.Mesh(geomtri12653,trimaterial12653Mesh);
+  scene.add(tri12653mesh);
+  tri12653mesh.position.set(box1positionx,0,0);
+///////////////////4分の一三角形 center,0,1
+///////////////////4分の一三角形 center,0,1
+var xi01 = [x1265canter, xi[5], xi[1]];
+var yi01 = [y1265canter, yi[5], yi[1]];
+var zi01 = [z1265canter, zi[5], zi[1]];
+var si01 = [s1265canter, si[5], si[1]];
+var geomtri12654 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri12654.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri12654.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri12654.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial12654Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri12654mesh =  new THREE.Mesh(geomtri12654,trimaterial12654Mesh);
+  scene.add(tri12654mesh);
+  tri12654mesh.position.set(box1positionx,0,0);
+///////////////////4分の一三角形 center,0,1
+renderer.render( scene, camera );
+
+//////////////////////////////////////////////////////////////////////////////////4分の一三角形 center,0,1 3047
+var xi01 = [x3047canter, xi[3], xi[0]];
+var yi01 = [y3047canter, yi[3], yi[0]];
+var zi01 = [z3047canter, zi[3], zi[0]];
+var si01 = [s3047canter, si[3], si[0]];
+var geomtri30471 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri30471.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri30471.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri30471.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial30471Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri30471mesh =  new THREE.Mesh(geomtri30471,trimaterial30471Mesh);
+  scene.add(tri30471mesh);
+  tri30471mesh.position.set(box1positionx,0,0);
+///////////////////4分の一三角形 center,0,1
+var xi01 = [x3047canter, xi[0], xi[4]];
+var yi01 = [y3047canter, yi[0], yi[4]];
+var zi01 = [z3047canter, zi[0], zi[4]];
+var si01 = [s3047canter, si[0], si[4]];
+var geomtri30472 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri30472.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri30472.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri30472.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial12652Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri30472mesh =  new THREE.Mesh(geomtri30472,trimaterial12652Mesh);
+  scene.add(tri30472mesh);
+  tri30472mesh.position.set(box1positionx,0,0);
+///////////////////4分の一三角形 center,0,1
+///////////////////4分の一三角形 center,0,1
+var xi01 = [x3047canter, xi[4], xi[7]];
+var yi01 = [y3047canter, yi[4], yi[7]];
+var zi01 = [z3047canter, zi[4], zi[7]];
+var si01 = [s3047canter, si[4], si[7]];
+var geomtri30473 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri30473.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri30473.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri30473.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial30473Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri30473mesh =  new THREE.Mesh(geomtri30473,trimaterial30473Mesh);
+  scene.add(tri30473mesh);
+  tri30473mesh.position.set(box1positionx,0,0);
+///////////////////4分の一三角形 center,0,1
+///////////////////4分の一三角形 center,0,1
+var xi01 = [x3047canter, xi[7], xi[3]];
+var yi01 = [y3047canter, yi[7], yi[3]];
+var zi01 = [z3047canter, zi[7], zi[3]];
+var si01 = [s3047canter, si[7], si[3]];
+var geomtri30474 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri30474.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri30474.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri30474.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial30474Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri30474mesh =  new THREE.Mesh(geomtri30474,trimaterial30474Mesh);
+  scene.add(tri30474mesh);
+  tri30474mesh.position.set(box1positionx,0,0);
+///////////////////4分の一三角形 center,0,1
+renderer.render( scene, camera );
+
+
+
+
+
+
+
+
+
+
+
+  ( function renderLoop () {
+    requestAnimationFrame( renderLoop );
+
+    tri1mesh.rotation.set(////////////////////////////////////////////
+      0,
+      tri1mesh.rotation.y + .01,
+      tri1mesh.rotation.z + .01
+    );
+    tri2mesh.rotation.set(
+      0,
+      tri2mesh.rotation.y + .01,
+      tri2mesh.rotation.z + .01
+    );
+        tri3mesh.rotation.set(
+      0,
+      tri3mesh.rotation.y + .01,
+      tri3mesh.rotation.z + .01
+    );
+        tri4mesh.rotation.set(
+      0,
+      tri4mesh.rotation.y + .01,
+      tri4mesh.rotation.z + .01
+    );
+    tri45671mesh.rotation.set(////////////
+      0,
+      tri45671mesh.rotation.y + .01,
+      tri45671mesh.rotation.z + .01
+    );
+    tri45672mesh.rotation.set(
+      0,
+      tri45672mesh.rotation.y + .01,
+      tri45672mesh.rotation.z + .01
+    );
+        tri45673mesh.rotation.set(
+      0,
+      tri45673mesh.rotation.y + .01,
+      tri45673mesh.rotation.z + .01
+    );
+        tri45674mesh.rotation.set(
+      0,
+      tri45674mesh.rotation.y + .01,
+      tri45674mesh.rotation.z + .01
+    );
+
+    tri01544mesh.rotation.set(////////////////////////////////////////////
+      0,
+      tri01544mesh.rotation.y + .01,
+      tri01544mesh.rotation.z + .01
+    );
+    tri01543mesh.rotation.set(
+      0,
+      tri01543mesh.rotation.y + .01,
+      tri01543mesh.rotation.z + .01
+    );
+        tri01542mesh.rotation.set(
+      0,
+      tri01542mesh.rotation.y + .01,
+      tri01542mesh.rotation.z + .01
+    );
+        tri01541mesh.rotation.set(
+      0,
+      tri01541mesh.rotation.y + .01,
+      tri01541mesh.rotation.z + .01
+    );
+    tri23764mesh.rotation.set(////////////
+      0,
+      tri23764mesh.rotation.y + .01,
+      tri23764mesh.rotation.z + .01
+    );
+    tri23763mesh.rotation.set(
+      0,
+      tri23763mesh.rotation.y + .01,
+      tri23763mesh.rotation.z + .01
+    );
+        tri23762mesh.rotation.set(
+      0,
+      tri23762mesh.rotation.y + .01,
+      tri23762mesh.rotation.z + .01
+    );
+        tri23761mesh.rotation.set(
+      0,
+      tri23761mesh.rotation.y + .01,
+      tri23761mesh.rotation.z + .01
+    );
+
+    tri12654mesh.rotation.set(////////////////////////////////////////////
+      0,
+      tri12654mesh.rotation.y + .01,
+      tri12654mesh.rotation.z + .01
+    );
+    tri12653mesh.rotation.set(
+      0,
+      tri12653mesh.rotation.y + .01,
+      tri12653mesh.rotation.z + .01
+    );
+        tri12652mesh.rotation.set(
+      0,
+      tri12652mesh.rotation.y + .01,
+      tri12652mesh.rotation.z + .01
+    );
+        tri12651mesh.rotation.set(
+      0,
+      tri12651mesh.rotation.y + .01,
+      tri12651mesh.rotation.z + .01
+    );
+    tri30474mesh.rotation.set(////////////
+      0,
+      tri30474mesh.rotation.y + .01,
+      tri30474mesh.rotation.z + .01
+    );
+    tri30473mesh.rotation.set(
+      0,
+      tri30473mesh.rotation.y + .01,
+      tri30473mesh.rotation.z + .01
+    );
+        tri30472mesh.rotation.set(
+      0,
+      tri30472mesh.rotation.y + .01,
+      tri30472mesh.rotation.z + .01
+    );
+        tri30471mesh.rotation.set(
+      0,
+      tri30471mesh.rotation.y + .01,
+      tri30471mesh.rotation.z + .01
+    );
+
+
+    renderer.render( scene, camera );
+  } )();
+
+///////////////////////////////////////２つめ立方体
+
+var xi = [-10, 10, 10, -10, -10, 10, 10, -10];
+var yi = [-10, -10, 10, 10, -10, -10, 10, 10];
+var zi = [0, 0, 0, 0, 10, 10, 10, 10];
+var si = [6, 1, 9, 2, 8, 7, 1, 3];////////ばしょは同じなので変数値のみ変更した
+var smax = Math.max(si[0],si[1],si[2],si[3],si[4],si[5],si[6],si[7]);
+//////////////6面の中点6点の座標
+var x1234canter = (xi[0]+xi[1])/2;
+var y1234canter = (yi[0]+yi[3])/2;
+var z1234canter = zi[0];
+var s1234canter = (si[0]+si[1]+si[2]+si[3])/4;
+var x4567canter = (xi[0]+xi[1])/2;
+var y4567canter = (yi[0]+yi[3])/2;
+var z4567canter = zi[4];//@
+var s4567canter = (si[4]+si[5]+si[6]+si[7])/4;
+
+var x0154canter = (xi[0]+xi[1])/2;
+var y0154canter = yi[0];
+var z0154canter = (zi[0]+zi[4])/2;
+var s0154canter = (si[0]+si[1]+si[5]+si[4])/4;
+var x2376canter = (xi[0]+xi[1])/2;
+var y2376canter = yi[3];//@
+var z2376canter = (zi[0]+zi[4])/2;
+var s2376canter = (si[2]+si[3]+si[7]+si[6])/4;
+
+var x1265canter = xi[1];
+var y1265canter = (yi[0]+yi[3])/2;
+var z1265canter = (zi[0]+zi[4])/2;
+var s1265canter = (si[1]+si[2]+si[6]+si[5])/4;
+var x3047canter = xi[0];//@
+var y3047canter = (yi[0]+yi[3])/2;
+var z3047canter = (zi[0]+zi[4])/2;
+var s3047canter = (si[3]+si[0]+si[4]+si[7])/4;
+
+var setx = 0;
+var sety = 0;
+var setz = 0;
+
+
+////////////////////////////////////////////4分の一三角形 center,0,1
+var xi01 = [x1234canter, xi[0], xi[1]];
+var yi01 = [y1234canter, yi[0], yi[1]];
+var zi01 = [z1234canter, zi[0], zi[1]];
+var si01 = [s1234canter, si[0], si[1]];
+var geomtri1 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri1.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri1.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri1.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial1Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri1mesh2 =  new THREE.Mesh(geomtri1,trimaterial1Mesh);
+  scene.add(tri1mesh2);
+  tri1mesh2.position.set(setx,sety,setz);
+
+///////////////////4分の一三角形 center,0,1
+
+///////////////////4分の一三角形 center,1,2
+var xi12 = [x1234canter, xi[1], xi[2]];
+var yi12 = [y1234canter, yi[1], yi[2]];
+var zi12 = [z1234canter, zi[1], zi[2]];
+var si12 = [s1234canter, si[1], si[2]];
+var geomtri2 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri2.vertices.push(new THREE.Vector3(xi12[i], yi12[i], zi12[i]));
+    }
+//geomtri2.faces.push(new THREE.Face3(1, 2, 3));
+//geomtri2.faces[1].vertexColors.push(new THREE.Face3(0, 1, 2));
+    geomtri2.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si12[i]/smax, 1, 0.5);        
+        geomtri2.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial2Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri2mesh2 =  new THREE.Mesh(geomtri2,trimaterial2Mesh);
+  scene.add(tri2mesh2);
+  tri2mesh2.position.set(setx,sety,setz);
+
+
+///////////////////4分の一三角形 center,1,2
+
+
+///////////////////4分の一三角形 center,2,3
+var xi23 = [x1234canter, xi[2], xi[3]];
+var yi23 = [y1234canter, yi[2], yi[3]];
+var zi23 = [z1234canter, zi[2], zi[3]];
+var si23 = [s1234canter, si[2], si[3]];
+var geomtri3 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri3.vertices.push(new THREE.Vector3(xi23[i], yi23[i], zi23[i]));
+    }
+
+    geomtri3.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si23[i]/smax, 1, 0.5);        
+        geomtri3.faces[0].vertexColors.push( color );
+        }
+
+//////メッシュかぶせるよう
+
+var trimaterial3Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri3mesh2 =  new THREE.Mesh(geomtri3,trimaterial3Mesh);
+  scene.add(tri3mesh2);
+  tri3mesh2.position.set(setx,sety,setz);
+
+///////////////////4分の一三角形  center,2,3
+
+///////////////////4分の一三角形 center,2,3
+var xi30 = [x1234canter, xi[3], xi[0]];
+var yi30 = [y1234canter, yi[3], yi[0]];
+var zi30 = [z1234canter, zi[3], zi[0]];
+var si30 = [s1234canter, si[3], si[0]];
+var geomtri4 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri4.vertices.push(new THREE.Vector3(xi30[i], yi30[i], zi30[i]));
+    }
+    geomtri4.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si30[i]/smax, 1, 0.5);        
+        geomtri4.faces[0].vertexColors.push( color );
+        }
+
+//////メッシュかぶせるよう
+
+var trimaterial4Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri4mesh2 =  new THREE.Mesh(geomtri4,trimaterial4Mesh);
+  scene.add(tri4mesh2);
+  tri4mesh2.position.set(setx,sety,setz);
+///////////////////4分の一三角形  center,2,3
+
+renderer.render( scene, camera );
+
+
+
+
+/////////////////////////////////////////////////////////////////4分の一三角形 center,0,1 4567
+var xi01 = [x4567canter, xi[0], xi[1]];
+var yi01 = [y4567canter, yi[0], yi[1]];
+var zi01 = [z4567canter, zi[4], zi[5]];///ZとSのみ本来の場所の
+var si01 = [s4567canter, si[4], si[5]];
+var geomtri45671 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri45671.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri45671.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri45671.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial45671Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri45671mesh2 =  new THREE.Mesh(geomtri45671,trimaterial45671Mesh);
+  scene.add(tri45671mesh2);
+  tri45671mesh2.position.set(setx,sety,setz);
+
+renderer.render( scene, camera );
+
+///////////////////4分の一三角形 center,0,1 4567
+///////////////////4分の一三角形 center,1,2
+var xi12 = [x4567canter, xi[1], xi[2]];
+var yi12 = [y4567canter, yi[1], yi[2]];
+var zi12 = [z4567canter, zi[5], zi[6]];
+var si12 = [s4567canter, si[5], si[6]];
+var geomtri45672 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri45672.vertices.push(new THREE.Vector3(xi12[i], yi12[i], zi12[i]));
+    }
+//geomtri2.faces.push(new THREE.Face3(1, 2, 3));
+//geomtri2.faces[1].vertexColors.push(new THREE.Face3(0, 1, 2));
+    geomtri45672.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si12[i]/smax, 1, 0.5);        
+        geomtri45672.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial45672Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri45672mesh2 =  new THREE.Mesh(geomtri45672,trimaterial45672Mesh);
+  scene.add(tri45672mesh2);
+  tri45672mesh2.position.set(setx,sety,setz);
+
+
+///////////////////4分の一三角形 center,1,2
+
+///////////////////4分の一三角形 center,2,3
+var xi23 = [x4567canter, xi[2], xi[3]];
+var yi23 = [y4567canter, yi[2], yi[3]];
+var zi23 = [z4567canter, zi[6], zi[7]];
+var si23 = [s4567canter, si[6], si[7]];
+var geomtri45673 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri45673.vertices.push(new THREE.Vector3(xi23[i], yi23[i], zi23[i]));
+    }
+
+    geomtri45673.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si23[i]/smax, 1, 0.5);        
+        geomtri45673.faces[0].vertexColors.push( color );
+        }
+
+//////メッシュかぶせるよう
+
+var trimaterial45673Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri45673mesh2 =  new THREE.Mesh(geomtri45673,trimaterial45673Mesh);
+  scene.add(tri45673mesh2);
+  tri45673mesh2.position.set(setx,sety,setz);
+
+///////////////////4分の一三角形  center,2,3
+///////////////////4分の一三角形 center,2,3
+var xi30 = [x4567canter, xi[3], xi[0]];
+var yi30 = [y4567canter, yi[3], yi[0]];
+var zi30 = [z4567canter, zi[7], zi[4]];
+var si30 = [s4567canter, si[7], si[4]];
+var geomtri45674 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri45674.vertices.push(new THREE.Vector3(xi30[i], yi30[i], zi30[i]));
+    }
+    geomtri45674.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si30[i]/smax, 1, 0.5);        
+        geomtri45674.faces[0].vertexColors.push( color );
+        }
+
+//////メッシュかぶせるよう
+var trimaterial45674Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri45674mesh2 =  new THREE.Mesh(geomtri45674,trimaterial45674Mesh);
+  scene.add(tri45674mesh2);
+  tri45674mesh2.position.set(setx,sety,setz);
+///////////////////4分の一三角形  center,2,3
+renderer.render( scene, camera );
+
+
+////////////////////////////////////////////////////////////////////4分の一三角形 center,0,1 0154
+var xi01 = [x0154canter, xi[0], xi[1]];
+var yi01 = [y0154canter, yi[0], yi[1]];
+var zi01 = [z0154canter, zi[0], zi[1]];
+var si01 = [s0154canter, si[0], si[1]];
+var geomtri01541 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri01541.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri01541.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri01541.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial0154Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri01541mesh2 =  new THREE.Mesh(geomtri01541,trimaterial0154Mesh);
+  scene.add(tri01541mesh2);
+  tri01541mesh2.position.set(setx,sety,setz);
+
+///////////////////4分の一三角形 center,0,1
+///////////////////////////////////////////////4分の一三角形 center,0,1 0154 2
+var xi01 = [x0154canter, xi[1], xi[5]];///5は１とおなじ
+var yi01 = [y0154canter, yi[1], yi[5]];//5は１とおなじ
+var zi01 = [z0154canter, zi[1], zi[5]];
+var si01 = [s0154canter, si[1], si[5]];
+var geomtri01542 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri01542.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri01542.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri01542.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial01542Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri01542mesh2 =  new THREE.Mesh(geomtri01542,trimaterial01542Mesh);
+  scene.add(tri01542mesh2);
+  tri01542mesh2.position.set(setx,sety,setz);
+
+///////////////////4分の一三角形 center,0,1
+ ///////////////////////////////////////////////4分の一三角形 center,0,1 0154 3
+var xi01 = [x0154canter, xi[5], xi[4]];///
+var yi01 = [y0154canter, yi[5], yi[4]];//5は4とおなじ　ｙとｚはおなじ
+var zi01 = [z0154canter, zi[5], zi[4]];
+var si01 = [s0154canter, si[5], si[4]];
+var geomtri01543 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri01543.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri01543.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri01543.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial01543Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri01543mesh2 =  new THREE.Mesh(geomtri01543,trimaterial01543Mesh);
+  scene.add(tri01543mesh2);
+  tri01543mesh2.position.set(setx,sety,setz);
+
+///////////////////4分の一三角形 center,0,1
+ ///////////////////////////////////////////////4分の一三角形 center,0,1 0154 4
+var xi01 = [x0154canter, xi[4], xi[0]];///
+var yi01 = [y0154canter, yi[4], yi[0]];//5は4とおなじ　ｙとｚはおなじ
+var zi01 = [z0154canter, zi[4], zi[0]];
+var si01 = [s0154canter, si[4], si[0]];
+var geomtri01544 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri01544.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri01544.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri01544.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial01544Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri01544mesh2 =  new THREE.Mesh(geomtri01544,trimaterial01544Mesh);
+  scene.add(tri01544mesh2);
+  tri01544mesh2.position.set(setx,sety,setz);
+
+///////////////////4分の一三角形 center,0,1
+    renderer.render( scene, camera );
+
+
+//////////////////////////////////////////////////////////////////////////////////4分の一三角形 center,0,1 2376
+var xi01 = [x2376canter, xi[2], xi[3]];
+var yi01 = [y2376canter, yi[2], yi[3]];
+var zi01 = [z2376canter, zi[2], zi[3]];
+var si01 = [s2376canter, si[2], si[3]];
+var geomtri23761 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri23761.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri23761.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri23761.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial23761Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri23761mesh2 =  new THREE.Mesh(geomtri23761,trimaterial23761Mesh);
+  scene.add(tri23761mesh2);
+  tri23761mesh2.position.set(setx,sety,setz);
+
+///////////////////4分の一三角形  center,0,1 2376
+var xi01 = [x2376canter, xi[3], xi[7]];
+var yi01 = [y2376canter, yi[3], yi[7]];
+var zi01 = [z2376canter, zi[3], zi[7]];
+var si01 = [s2376canter, si[3], si[7]];
+var geomtri23762 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri23762.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri23762.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri23762.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial23762Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri23762mesh2 =  new THREE.Mesh(geomtri23762,trimaterial23762Mesh);
+  scene.add(tri23762mesh2);
+  tri23762mesh2.position.set(setx,sety,setz);
+///////////////////4分の一三角形  center,0,1 2376
+var xi01 = [x2376canter, xi[7], xi[6]];
+var yi01 = [y2376canter, yi[7], yi[6]];
+var zi01 = [z2376canter, zi[7], zi[6]];
+var si01 = [s2376canter, si[7], si[6]];
+var geomtri23763 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri23763.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri23763.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri23763.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial23763Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri23763mesh2 =  new THREE.Mesh(geomtri23763,trimaterial23763Mesh);
+  scene.add(tri23763mesh2);
+  tri23763mesh2.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+///////////////////4分の一三角形  center,0,1 2376
+var xi01 = [x2376canter, xi[6], xi[2]];
+var yi01 = [y2376canter, yi[6], yi[2]];
+var zi01 = [z2376canter, zi[6], zi[2]];
+var si01 = [s2376canter, si[6], si[2]];
+var geomtri23764 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri23764.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri23764.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri23764.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial23764Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri23764mesh2 =  new THREE.Mesh(geomtri23764,trimaterial23764Mesh);
+  scene.add(tri23764mesh2);
+  tri23764mesh2.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+  renderer.render( scene, camera );
+
+//////////////////////////////////////////////////////////////////////////////////4分の一三角形 center,0,1 1265
+var xi01 = [x1265canter, xi[1], xi[2]];
+var yi01 = [y1265canter, yi[1], yi[2]];
+var zi01 = [z1265canter, zi[1], zi[2]];
+var si01 = [s1265canter, si[1], si[2]];
+var geomtri12651 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri12651.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri12651.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri12651.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial12651Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri12651mesh2 =  new THREE.Mesh(geomtri12651,trimaterial12651Mesh);
+  scene.add(tri12651mesh2);
+  tri12651mesh2.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+var xi01 = [x1265canter, xi[2], xi[6]];
+var yi01 = [y1265canter, yi[2], yi[6]];
+var zi01 = [z1265canter, zi[2], zi[6]];
+var si01 = [s1265canter, si[2], si[6]];
+var geomtri12652 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri12652.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri12652.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri12652.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial12652Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri12652mesh2 =  new THREE.Mesh(geomtri12652,trimaterial12652Mesh);
+  scene.add(tri12652mesh2);
+  tri12652mesh2.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+///////////////////4分の一三角形 center,0,1
+var xi01 = [x1265canter, xi[6], xi[5]];
+var yi01 = [y1265canter, yi[6], yi[5]];
+var zi01 = [z1265canter, zi[6], zi[5]];
+var si01 = [s1265canter, si[6], si[5]];
+var geomtri12653 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri12653.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri12653.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri12653.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial12653Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri12653mesh2 =  new THREE.Mesh(geomtri12653,trimaterial12653Mesh);
+  scene.add(tri12653mesh2);
+  tri12653mesh2.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+///////////////////4分の一三角形 center,0,1
+var xi01 = [x1265canter, xi[5], xi[1]];
+var yi01 = [y1265canter, yi[5], yi[1]];
+var zi01 = [z1265canter, zi[5], zi[1]];
+var si01 = [s1265canter, si[5], si[1]];
+var geomtri12654 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri12654.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri12654.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri12654.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial12654Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri12654mesh2 =  new THREE.Mesh(geomtri12654,trimaterial12654Mesh);
+  scene.add(tri12654mesh2);
+  tri12654mesh2.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+renderer.render( scene, camera );
+
+//////////////////////////////////////////////////////////////////////////////////4分の一三角形 center,0,1 3047
+var xi01 = [x3047canter, xi[3], xi[0]];
+var yi01 = [y3047canter, yi[3], yi[0]];
+var zi01 = [z3047canter, zi[3], zi[0]];
+var si01 = [s3047canter, si[3], si[0]];
+var geomtri30471 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri30471.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri30471.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri30471.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial30471Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri30471mesh2 =  new THREE.Mesh(geomtri30471,trimaterial30471Mesh);
+  scene.add(tri30471mesh2);
+  tri30471mesh2.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+var xi01 = [x3047canter, xi[0], xi[4]];
+var yi01 = [y3047canter, yi[0], yi[4]];
+var zi01 = [z3047canter, zi[0], zi[4]];
+var si01 = [s3047canter, si[0], si[4]];
+var geomtri30472 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri30472.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri30472.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri30472.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial12652Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri30472mesh2 =  new THREE.Mesh(geomtri30472,trimaterial12652Mesh);
+  scene.add(tri30472mesh2);
+  tri30472mesh2.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+///////////////////4分の一三角形 center,0,1
+var xi01 = [x3047canter, xi[4], xi[7]];
+var yi01 = [y3047canter, yi[4], yi[7]];
+var zi01 = [z3047canter, zi[4], zi[7]];
+var si01 = [s3047canter, si[4], si[7]];
+var geomtri30473 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri30473.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri30473.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri30473.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial30473Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri30473mesh2 =  new THREE.Mesh(geomtri30473,trimaterial30473Mesh);
+  scene.add(tri30473mesh2);
+  tri30473mesh2.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+///////////////////4分の一三角形 center,0,1
+var xi01 = [x3047canter, xi[7], xi[3]];
+var yi01 = [y3047canter, yi[7], yi[3]];
+var zi01 = [z3047canter, zi[7], zi[3]];
+var si01 = [s3047canter, si[7], si[3]];
+var geomtri30474 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri30474.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri30474.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri30474.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial30474Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri30474mesh2 =  new THREE.Mesh(geomtri30474,trimaterial30474Mesh);
+  scene.add(tri30474mesh2);
+  tri30474mesh2.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+renderer.render( scene, camera );
+
+( function renderLoop () {
+    requestAnimationFrame( renderLoop );
+
+    tri1mesh2.rotation.set(////////////////////////////////////////////
+      0,
+      tri1mesh2.rotation.y + .01,
+      tri1mesh2.rotation.z + .01
+    );
+    tri2mesh2.rotation.set(
+      0,
+      tri2mesh2.rotation.y + .01,
+      tri2mesh2.rotation.z + .01
+    );
+        tri3mesh2.rotation.set(
+      0,
+      tri3mesh2.rotation.y + .01,
+      tri3mesh2.rotation.z + .01
+    );
+        tri4mesh2.rotation.set(
+      0,
+      tri4mesh2.rotation.y + .01,
+      tri4mesh2.rotation.z + .01
+    );
+    tri45671mesh2.rotation.set(////////////
+      0,
+      tri45671mesh2.rotation.y + .01,
+      tri45671mesh2.rotation.z + .01
+    );
+    tri45672mesh2.rotation.set(
+      0,
+      tri45672mesh2.rotation.y + .01,
+      tri45672mesh2.rotation.z + .01
+    );
+        tri45673mesh2.rotation.set(
+      0,
+      tri45673mesh2.rotation.y + .01,
+      tri45673mesh2.rotation.z + .01
+    );
+        tri45674mesh2.rotation.set(
+      0,
+      tri45674mesh2.rotation.y + .01,
+      tri45674mesh2.rotation.z + .01
+    );
+
+    tri01544mesh2.rotation.set(////////////////////////////////////////////
+      0,
+      tri01544mesh2.rotation.y + .01,
+      tri01544mesh2.rotation.z + .01
+    );
+    tri01543mesh2.rotation.set(
+      0,
+      tri01543mesh2.rotation.y + .01,
+      tri01543mesh2.rotation.z + .01
+    );
+        tri01542mesh2.rotation.set(
+      0,
+      tri01542mesh2.rotation.y + .01,
+      tri01542mesh2.rotation.z + .01
+    );
+        tri01541mesh2.rotation.set(
+      0,
+      tri01541mesh2.rotation.y + .01,
+      tri01541mesh2.rotation.z + .01
+    );
+    tri23764mesh2.rotation.set(////////////
+      0,
+      tri23764mesh2.rotation.y + .01,
+      tri23764mesh2.rotation.z + .01
+    );
+    tri23763mesh2.rotation.set(
+      0,
+      tri23763mesh2.rotation.y + .01,
+      tri23763mesh2.rotation.z + .01
+    );
+        tri23762mesh2.rotation.set(
+      0,
+      tri23762mesh2.rotation.y + .01,
+      tri23762mesh2.rotation.z + .01
+    );
+        tri23761mesh2.rotation.set(
+      0,
+      tri23761mesh2.rotation.y + .01,
+      tri23761mesh2.rotation.z + .01
+    );
+
+    tri12654mesh2.rotation.set(////////////////////////////////////////////
+      0,
+      tri12654mesh2.rotation.y + .01,
+      tri12654mesh2.rotation.z + .01
+    );
+    tri12653mesh2.rotation.set(
+      0,
+      tri12653mesh2.rotation.y + .01,
+      tri12653mesh2.rotation.z + .01
+    );
+        tri12652mesh2.rotation.set(
+      0,
+      tri12652mesh2.rotation.y + .01,
+      tri12652mesh2.rotation.z + .01
+    );
+        tri12651mesh2.rotation.set(
+      0,
+      tri12651mesh2.rotation.y + .01,
+      tri12651mesh2.rotation.z + .01
+    );
+    tri30474mesh2.rotation.set(////////////
+      0,
+      tri30474mesh2.rotation.y + .01,
+      tri30474mesh2.rotation.z + .01
+    );
+    tri30473mesh2.rotation.set(
+      0,
+      tri30473mesh2.rotation.y + .01,
+      tri30473mesh2.rotation.z + .01
+    );
+        tri30472mesh2.rotation.set(
+      0,
+      tri30472mesh2.rotation.y + .01,
+      tri30472mesh2.rotation.z + .01
+    );
+        tri30471mesh2.rotation.set(
+      0,
+      tri30471mesh2.rotation.y + .01,
+      tri30471mesh2.rotation.z + .01
+    );
+
+
+    renderer.render( scene, camera );
+  } )();
+
+
+
+
+
+
+
+
+///////////////////////////////////////3つめ立方体    補完立方体
+
+var xi = [-10, 10, 10, -10, -10, 10, 10, -10];
+var yi = [-10, -10, 10, 10, -10, -10, 10, 10];
+var zi = [0, 0, 0, 0, 10, 10, 10, 10];
+var si = [6, 1, 9, 2, 8, 7, 1, 3];////////ばしょは同じなので変数値のみ変更した
+
+////////////siのみ補完値に置き換える
+var t0 = 0.5;
+var ti = [0,1];//ｔ出すのに使う
+var tfix = [-1,1];//s出すのにつかう、局所座標の元
+var si = [2, 4, 6, 8, 1, 3, 4, 7];
+var si2 = [6, 1, 9, 2, 8, 7, 1, 3];////////ばしょは同じなので変数値のみ変更した したではsiとしている
+var t = (2*t0 - ti[0] - ti[1])/(ti[1]- ti[0]);
+//var sihokan = [];
+var sihokan = [];
+for (var i = 0; i < si.length; i++) {//    8 ten
+ sihokan[i] = (1/2)*(1 + t*tfix[0])*si[i] + (1/2)*(1 + t*tfix[1])*si2[i];// もとめたいSのはず
+}
+ // console.log(si.length);//チェック用
+//console.log(t);//チェック用
+//  console.log(sihokan[0],sihokan[1],sihokan[2],sihokan[3],sihokan[4],sihokan[5],sihokan[6]);//チェック用
+for (var i = 0; i < si.length; i++) {//    8 ten
+si[i] = sihokan[i];// 補完値に置き換える
+}
+////////////siのみ補完値に置き換える
+
+
+var smax = Math.max(si[0],si[1],si[2],si[3],si[4],si[5],si[6],si[7]);
+//////////////6面の中点6点の座標
+var x1234canter = (xi[0]+xi[1])/2;
+var y1234canter = (yi[0]+yi[3])/2;
+var z1234canter = zi[0];
+var s1234canter = (si[0]+si[1]+si[2]+si[3])/4;
+var x4567canter = (xi[0]+xi[1])/2;
+var y4567canter = (yi[0]+yi[3])/2;
+var z4567canter = zi[4];//@
+var s4567canter = (si[4]+si[5]+si[6]+si[7])/4;
+
+var x0154canter = (xi[0]+xi[1])/2;
+var y0154canter = yi[0];
+var z0154canter = (zi[0]+zi[4])/2;
+var s0154canter = (si[0]+si[1]+si[5]+si[4])/4;
+var x2376canter = (xi[0]+xi[1])/2;
+var y2376canter = yi[3];//@
+var z2376canter = (zi[0]+zi[4])/2;
+var s2376canter = (si[2]+si[3]+si[7]+si[6])/4;
+
+var x1265canter = xi[1];
+var y1265canter = (yi[0]+yi[3])/2;
+var z1265canter = (zi[0]+zi[4])/2;
+var s1265canter = (si[1]+si[2]+si[6]+si[5])/4;
+var x3047canter = xi[0];//@
+var y3047canter = (yi[0]+yi[3])/2;
+var z3047canter = (zi[0]+zi[4])/2;
+var s3047canter = (si[3]+si[0]+si[4]+si[7])/4;
+
+var setx = 50;
+var sety = 0;
+var setz = 0;
+
+
+////////////////////////////////////////////4分の一三角形 center,0,1
+var xi01 = [x1234canter, xi[0], xi[1]];
+var yi01 = [y1234canter, yi[0], yi[1]];
+var zi01 = [z1234canter, zi[0], zi[1]];
+var si01 = [s1234canter, si[0], si[1]];
+var geomtri1 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri1.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri1.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri1.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial1Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri1mesh3 =  new THREE.Mesh(geomtri1,trimaterial1Mesh);
+  scene.add(tri1mesh3);
+  tri1mesh3.position.set(setx,sety,setz);
+
+///////////////////4分の一三角形 center,0,1
+
+///////////////////4分の一三角形 center,1,2
+var xi12 = [x1234canter, xi[1], xi[2]];
+var yi12 = [y1234canter, yi[1], yi[2]];
+var zi12 = [z1234canter, zi[1], zi[2]];
+var si12 = [s1234canter, si[1], si[2]];
+var geomtri2 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri2.vertices.push(new THREE.Vector3(xi12[i], yi12[i], zi12[i]));
+    }
+//geomtri2.faces.push(new THREE.Face3(1, 2, 3));
+//geomtri2.faces[1].vertexColors.push(new THREE.Face3(0, 1, 2));
+    geomtri2.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si12[i]/smax, 1, 0.5);        
+        geomtri2.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial2Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri2mesh3 =  new THREE.Mesh(geomtri2,trimaterial2Mesh);
+  scene.add(tri2mesh3);
+  tri2mesh3.position.set(setx,sety,setz);
+
+
+///////////////////4分の一三角形 center,1,2
+
+
+///////////////////4分の一三角形 center,2,3
+var xi23 = [x1234canter, xi[2], xi[3]];
+var yi23 = [y1234canter, yi[2], yi[3]];
+var zi23 = [z1234canter, zi[2], zi[3]];
+var si23 = [s1234canter, si[2], si[3]];
+var geomtri3 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri3.vertices.push(new THREE.Vector3(xi23[i], yi23[i], zi23[i]));
+    }
+
+    geomtri3.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si23[i]/smax, 1, 0.5);        
+        geomtri3.faces[0].vertexColors.push( color );
+        }
+
+//////メッシュかぶせるよう
+
+var trimaterial3Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri3mesh3 =  new THREE.Mesh(geomtri3,trimaterial3Mesh);
+  scene.add(tri3mesh3);
+  tri3mesh3.position.set(setx,sety,setz);
+
+///////////////////4分の一三角形  center,2,3
+
+///////////////////4分の一三角形 center,2,3
+var xi30 = [x1234canter, xi[3], xi[0]];
+var yi30 = [y1234canter, yi[3], yi[0]];
+var zi30 = [z1234canter, zi[3], zi[0]];
+var si30 = [s1234canter, si[3], si[0]];
+var geomtri4 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri4.vertices.push(new THREE.Vector3(xi30[i], yi30[i], zi30[i]));
+    }
+    geomtri4.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si30[i]/smax, 1, 0.5);        
+        geomtri4.faces[0].vertexColors.push( color );
+        }
+
+//////メッシュかぶせるよう
+
+var trimaterial4Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri4mesh3 =  new THREE.Mesh(geomtri4,trimaterial4Mesh);
+  scene.add(tri4mesh3);
+  tri4mesh3.position.set(setx,sety,setz);
+///////////////////4分の一三角形  center,2,3
+
+renderer.render( scene, camera );
+
+
+
+
+/////////////////////////////////////////////////////////////////4分の一三角形 center,0,1 4567
+var xi01 = [x4567canter, xi[0], xi[1]];
+var yi01 = [y4567canter, yi[0], yi[1]];
+var zi01 = [z4567canter, zi[4], zi[5]];///ZとSのみ本来の場所の
+var si01 = [s4567canter, si[4], si[5]];
+var geomtri45671 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri45671.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri45671.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri45671.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial45671Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri45671mesh3 =  new THREE.Mesh(geomtri45671,trimaterial45671Mesh);
+  scene.add(tri45671mesh3);
+  tri45671mesh3.position.set(setx,sety,setz);
+
+renderer.render( scene, camera );
+
+///////////////////4分の一三角形 center,0,1 4567
+///////////////////4分の一三角形 center,1,2
+var xi12 = [x4567canter, xi[1], xi[2]];
+var yi12 = [y4567canter, yi[1], yi[2]];
+var zi12 = [z4567canter, zi[5], zi[6]];
+var si12 = [s4567canter, si[5], si[6]];
+var geomtri45672 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri45672.vertices.push(new THREE.Vector3(xi12[i], yi12[i], zi12[i]));
+    }
+//geomtri2.faces.push(new THREE.Face3(1, 2, 3));
+//geomtri2.faces[1].vertexColors.push(new THREE.Face3(0, 1, 2));
+    geomtri45672.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si12[i]/smax, 1, 0.5);        
+        geomtri45672.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial45672Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri45672mesh3 =  new THREE.Mesh(geomtri45672,trimaterial45672Mesh);
+  scene.add(tri45672mesh3);
+  tri45672mesh3.position.set(setx,sety,setz);
+
+
+///////////////////4分の一三角形 center,1,2
+
+///////////////////4分の一三角形 center,2,3
+var xi23 = [x4567canter, xi[2], xi[3]];
+var yi23 = [y4567canter, yi[2], yi[3]];
+var zi23 = [z4567canter, zi[6], zi[7]];
+var si23 = [s4567canter, si[6], si[7]];
+var geomtri45673 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri45673.vertices.push(new THREE.Vector3(xi23[i], yi23[i], zi23[i]));
+    }
+
+    geomtri45673.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si23[i]/smax, 1, 0.5);        
+        geomtri45673.faces[0].vertexColors.push( color );
+        }
+
+//////メッシュかぶせるよう
+
+var trimaterial45673Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri45673mesh3 =  new THREE.Mesh(geomtri45673,trimaterial45673Mesh);
+  scene.add(tri45673mesh3);
+  tri45673mesh3.position.set(setx,sety,setz);
+
+///////////////////4分の一三角形  center,2,3
+///////////////////4分の一三角形 center,2,3
+var xi30 = [x4567canter, xi[3], xi[0]];
+var yi30 = [y4567canter, yi[3], yi[0]];
+var zi30 = [z4567canter, zi[7], zi[4]];
+var si30 = [s4567canter, si[7], si[4]];
+var geomtri45674 = new THREE.Geometry();
+
+ for (var i = 0; i < 3; i++) {
+      geomtri45674.vertices.push(new THREE.Vector3(xi30[i], yi30[i], zi30[i]));
+    }
+    geomtri45674.faces.push(new THREE.Face3(0, 1, 2));
+  for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si30[i]/smax, 1, 0.5);        
+        geomtri45674.faces[0].vertexColors.push( color );
+        }
+
+//////メッシュかぶせるよう
+var trimaterial45674Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri45674mesh3 =  new THREE.Mesh(geomtri45674,trimaterial45674Mesh);
+  scene.add(tri45674mesh3);
+  tri45674mesh3.position.set(setx,sety,setz);
+///////////////////4分の一三角形  center,2,3
+renderer.render( scene, camera );
+
+
+////////////////////////////////////////////////////////////////////4分の一三角形 center,0,1 0154
+var xi01 = [x0154canter, xi[0], xi[1]];
+var yi01 = [y0154canter, yi[0], yi[1]];
+var zi01 = [z0154canter, zi[0], zi[1]];
+var si01 = [s0154canter, si[0], si[1]];
+var geomtri01541 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri01541.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri01541.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri01541.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial0154Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri01541mesh3 =  new THREE.Mesh(geomtri01541,trimaterial0154Mesh);
+  scene.add(tri01541mesh3);
+  tri01541mesh3.position.set(setx,sety,setz);
+
+///////////////////4分の一三角形 center,0,1
+///////////////////////////////////////////////4分の一三角形 center,0,1 0154 2
+var xi01 = [x0154canter, xi[1], xi[5]];///5は１とおなじ
+var yi01 = [y0154canter, yi[1], yi[5]];//5は１とおなじ
+var zi01 = [z0154canter, zi[1], zi[5]];
+var si01 = [s0154canter, si[1], si[5]];
+var geomtri01542 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri01542.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri01542.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri01542.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial01542Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri01542mesh3 =  new THREE.Mesh(geomtri01542,trimaterial01542Mesh);
+  scene.add(tri01542mesh3);
+  tri01542mesh3.position.set(setx,sety,setz);
+
+///////////////////4分の一三角形 center,0,1
+ ///////////////////////////////////////////////4分の一三角形 center,0,1 0154 3
+var xi01 = [x0154canter, xi[5], xi[4]];///
+var yi01 = [y0154canter, yi[5], yi[4]];//5は4とおなじ　ｙとｚはおなじ
+var zi01 = [z0154canter, zi[5], zi[4]];
+var si01 = [s0154canter, si[5], si[4]];
+var geomtri01543 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri01543.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri01543.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri01543.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial01543Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri01543mesh3 =  new THREE.Mesh(geomtri01543,trimaterial01543Mesh);
+  scene.add(tri01543mesh3);
+  tri01543mesh3.position.set(setx,sety,setz);
+
+///////////////////4分の一三角形 center,0,1
+ ///////////////////////////////////////////////4分の一三角形 center,0,1 0154 4
+var xi01 = [x0154canter, xi[4], xi[0]];///
+var yi01 = [y0154canter, yi[4], yi[0]];//5は4とおなじ　ｙとｚはおなじ
+var zi01 = [z0154canter, zi[4], zi[0]];
+var si01 = [s0154canter, si[4], si[0]];
+var geomtri01544 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri01544.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri01544.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri01544.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial01544Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri01544mesh3 =  new THREE.Mesh(geomtri01544,trimaterial01544Mesh);
+  scene.add(tri01544mesh3);
+  tri01544mesh3.position.set(setx,sety,setz);
+
+///////////////////4分の一三角形 center,0,1
+    renderer.render( scene, camera );
+
+
+//////////////////////////////////////////////////////////////////////////////////4分の一三角形 center,0,1 2376
+var xi01 = [x2376canter, xi[2], xi[3]];
+var yi01 = [y2376canter, yi[2], yi[3]];
+var zi01 = [z2376canter, zi[2], zi[3]];
+var si01 = [s2376canter, si[2], si[3]];
+var geomtri23761 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri23761.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri23761.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri23761.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial23761Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri23761mesh3 =  new THREE.Mesh(geomtri23761,trimaterial23761Mesh);
+  scene.add(tri23761mesh3);
+  tri23761mesh3.position.set(setx,sety,setz);
+
+///////////////////4分の一三角形  center,0,1 2376
+var xi01 = [x2376canter, xi[3], xi[7]];
+var yi01 = [y2376canter, yi[3], yi[7]];
+var zi01 = [z2376canter, zi[3], zi[7]];
+var si01 = [s2376canter, si[3], si[7]];
+var geomtri23762 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri23762.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri23762.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri23762.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial23762Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri23762mesh3 =  new THREE.Mesh(geomtri23762,trimaterial23762Mesh);
+  scene.add(tri23762mesh3);
+  tri23762mesh3.position.set(setx,sety,setz);
+///////////////////4分の一三角形  center,0,1 2376
+var xi01 = [x2376canter, xi[7], xi[6]];
+var yi01 = [y2376canter, yi[7], yi[6]];
+var zi01 = [z2376canter, zi[7], zi[6]];
+var si01 = [s2376canter, si[7], si[6]];
+var geomtri23763 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri23763.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri23763.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri23763.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial23763Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri23763mesh3 =  new THREE.Mesh(geomtri23763,trimaterial23763Mesh);
+  scene.add(tri23763mesh3);
+  tri23763mesh3.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+///////////////////4分の一三角形  center,0,1 2376
+var xi01 = [x2376canter, xi[6], xi[2]];
+var yi01 = [y2376canter, yi[6], yi[2]];
+var zi01 = [z2376canter, zi[6], zi[2]];
+var si01 = [s2376canter, si[6], si[2]];
+var geomtri23764 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri23764.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri23764.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri23764.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+
+var trimaterial23764Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri23764mesh3 =  new THREE.Mesh(geomtri23764,trimaterial23764Mesh);
+  scene.add(tri23764mesh3);
+  tri23764mesh3.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+  renderer.render( scene, camera );
+
+//////////////////////////////////////////////////////////////////////////////////4分の一三角形 center,0,1 1265
+var xi01 = [x1265canter, xi[1], xi[2]];
+var yi01 = [y1265canter, yi[1], yi[2]];
+var zi01 = [z1265canter, zi[1], zi[2]];
+var si01 = [s1265canter, si[1], si[2]];
+var geomtri12651 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri12651.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri12651.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri12651.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial12651Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri12651mesh3 =  new THREE.Mesh(geomtri12651,trimaterial12651Mesh);
+  scene.add(tri12651mesh3);
+  tri12651mesh3.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+var xi01 = [x1265canter, xi[2], xi[6]];
+var yi01 = [y1265canter, yi[2], yi[6]];
+var zi01 = [z1265canter, zi[2], zi[6]];
+var si01 = [s1265canter, si[2], si[6]];
+var geomtri12652 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri12652.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri12652.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri12652.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial12652Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri12652mesh3 =  new THREE.Mesh(geomtri12652,trimaterial12652Mesh);
+  scene.add(tri12652mesh3);
+  tri12652mesh3.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+///////////////////4分の一三角形 center,0,1
+var xi01 = [x1265canter, xi[6], xi[5]];
+var yi01 = [y1265canter, yi[6], yi[5]];
+var zi01 = [z1265canter, zi[6], zi[5]];
+var si01 = [s1265canter, si[6], si[5]];
+var geomtri12653 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri12653.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri12653.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri12653.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial12653Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri12653mesh3 =  new THREE.Mesh(geomtri12653,trimaterial12653Mesh);
+  scene.add(tri12653mesh3);
+  tri12653mesh3.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+///////////////////4分の一三角形 center,0,1
+var xi01 = [x1265canter, xi[5], xi[1]];
+var yi01 = [y1265canter, yi[5], yi[1]];
+var zi01 = [z1265canter, zi[5], zi[1]];
+var si01 = [s1265canter, si[5], si[1]];
+var geomtri12654 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri12654.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri12654.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri12654.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial12654Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri12654mesh3 =  new THREE.Mesh(geomtri12654,trimaterial12654Mesh);
+  scene.add(tri12654mesh3);
+  tri12654mesh3.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+renderer.render( scene, camera );
+
+//////////////////////////////////////////////////////////////////////////////////4分の一三角形 center,0,1 3047
+var xi01 = [x3047canter, xi[3], xi[0]];
+var yi01 = [y3047canter, yi[3], yi[0]];
+var zi01 = [z3047canter, zi[3], zi[0]];
+var si01 = [s3047canter, si[3], si[0]];
+var geomtri30471 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri30471.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri30471.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri30471.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial30471Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri30471mesh3 =  new THREE.Mesh(geomtri30471,trimaterial30471Mesh);
+  scene.add(tri30471mesh3);
+  tri30471mesh3.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+var xi01 = [x3047canter, xi[0], xi[4]];
+var yi01 = [y3047canter, yi[0], yi[4]];
+var zi01 = [z3047canter, zi[0], zi[4]];
+var si01 = [s3047canter, si[0], si[4]];
+var geomtri30472 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri30472.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri30472.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri30472.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial12652Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri30472mesh3 =  new THREE.Mesh(geomtri30472,trimaterial12652Mesh);
+  scene.add(tri30472mesh3);
+  tri30472mesh3.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+///////////////////4分の一三角形 center,0,1
+var xi01 = [x3047canter, xi[4], xi[7]];
+var yi01 = [y3047canter, yi[4], yi[7]];
+var zi01 = [z3047canter, zi[4], zi[7]];
+var si01 = [s3047canter, si[4], si[7]];
+var geomtri30473 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri30473.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri30473.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri30473.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial30473Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri30473mesh3 =  new THREE.Mesh(geomtri30473,trimaterial30473Mesh);
+  scene.add(tri30473mesh3);
+  tri30473mesh3.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+///////////////////4分の一三角形 center,0,1
+var xi01 = [x3047canter, xi[7], xi[3]];
+var yi01 = [y3047canter, yi[7], yi[3]];
+var zi01 = [z3047canter, zi[7], zi[3]];
+var si01 = [s3047canter, si[7], si[3]];
+var geomtri30474 = new THREE.Geometry();
+
+for (var i = 0; i < 3; i++) {
+      geomtri30474.vertices.push(new THREE.Vector3(xi01[i], yi01[i], zi01[i]));
+    }
+    geomtri30474.faces.push(new THREE.Face3(0, 1, 2));
+for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(si01[i]/smax, 1, 0.5);        
+        geomtri30474.faces[0].vertexColors.push( color );
+        }
+//////メッシュかぶせるよう
+var trimaterial30474Mesh = new THREE.MeshBasicMaterial({
+  vertexColors: THREE.VertexColors,
+  side: THREE.DoubleSide
+});
+var tri30474mesh3 =  new THREE.Mesh(geomtri30474,trimaterial30474Mesh);
+  scene.add(tri30474mesh3);
+  tri30474mesh3.position.set(setx,sety,setz);
+///////////////////4分の一三角形 center,0,1
+renderer.render( scene, camera );
+
+( function renderLoop () {
+    requestAnimationFrame( renderLoop );
+
+    tri1mesh3.rotation.set(////////////////////////////////////////////
+      0,
+      tri1mesh3.rotation.y + .01,
+      tri1mesh3.rotation.z + .01
+    );
+    tri2mesh3.rotation.set(
+      0,
+      tri2mesh3.rotation.y + .01,
+      tri2mesh3.rotation.z + .01
+    );
+        tri3mesh3.rotation.set(
+      0,
+      tri3mesh3.rotation.y + .01,
+      tri3mesh3.rotation.z + .01
+    );
+        tri4mesh3.rotation.set(
+      0,
+      tri4mesh3.rotation.y + .01,
+      tri4mesh3.rotation.z + .01
+    );
+    tri45671mesh3.rotation.set(////////////
+      0,
+      tri45671mesh3.rotation.y + .01,
+      tri45671mesh3.rotation.z + .01
+    );
+    tri45672mesh3.rotation.set(
+      0,
+      tri45672mesh3.rotation.y + .01,
+      tri45672mesh3.rotation.z + .01
+    );
+        tri45673mesh3.rotation.set(
+      0,
+      tri45673mesh3.rotation.y + .01,
+      tri45673mesh3.rotation.z + .01
+    );
+        tri45674mesh3.rotation.set(
+      0,
+      tri45674mesh3.rotation.y + .01,
+      tri45674mesh3.rotation.z + .01
+    );
+
+    tri01544mesh3.rotation.set(////////////////////////////////////////////
+      0,
+      tri01544mesh3.rotation.y + .01,
+      tri01544mesh3.rotation.z + .01
+    );
+    tri01543mesh3.rotation.set(
+      0,
+      tri01543mesh3.rotation.y + .01,
+      tri01543mesh3.rotation.z + .01
+    );
+        tri01542mesh3.rotation.set(
+      0,
+      tri01542mesh3.rotation.y + .01,
+      tri01542mesh3.rotation.z + .01
+    );
+        tri01541mesh3.rotation.set(
+      0,
+      tri01541mesh3.rotation.y + .01,
+      tri01541mesh3.rotation.z + .01
+    );
+    tri23764mesh3.rotation.set(////////////
+      0,
+      tri23764mesh3.rotation.y + .01,
+      tri23764mesh3.rotation.z + .01
+    );
+    tri23763mesh3.rotation.set(
+      0,
+      tri23763mesh3.rotation.y + .01,
+      tri23763mesh3.rotation.z + .01
+    );
+        tri23762mesh3.rotation.set(
+      0,
+      tri23762mesh3.rotation.y + .01,
+      tri23762mesh3.rotation.z + .01
+    );
+        tri23761mesh3.rotation.set(
+      0,
+      tri23761mesh3.rotation.y + .01,
+      tri23761mesh3.rotation.z + .01
+    );
+
+    tri12654mesh3.rotation.set(////////////////////////////////////////////
+      0,
+      tri12654mesh3.rotation.y + .01,
+      tri12654mesh3.rotation.z + .01
+    );
+    tri12653mesh3.rotation.set(
+      0,
+      tri12653mesh3.rotation.y + .01,
+      tri12653mesh3.rotation.z + .01
+    );
+        tri12652mesh3.rotation.set(
+      0,
+      tri12652mesh3.rotation.y + .01,
+      tri12652mesh3.rotation.z + .01
+    );
+        tri12651mesh3.rotation.set(
+      0,
+      tri12651mesh3.rotation.y + .01,
+      tri12651mesh3.rotation.z + .01
+    );
+    tri30474mesh3.rotation.set(////////////
+      0,
+      tri30474mesh3.rotation.y + .01,
+      tri30474mesh3.rotation.z + .01
+    );
+    tri30473mesh3.rotation.set(
+      0,
+      tri30473mesh3.rotation.y + .01,
+      tri30473mesh3.rotation.z + .01
+    );
+        tri30472mesh3.rotation.set(
+      0,
+      tri30472mesh3.rotation.y + .01,
+      tri30472mesh3.rotation.z + .01
+    );
+        tri30471mesh3.rotation.set(
+      0,
+      tri30471mesh3.rotation.y + .01,
+      tri30471mesh3.rotation.z + .01
+    );
+
+
+    renderer.render( scene, camera );
+  } )();
+
+
+////////////////////////////////////////////////////////////16点から補間
+
+
+var x0 = 0.5;//求めたいざひょう
+var y0 = 0.5;
+var z0 = 0.5;
+var t0 = 0.0;
+var s0 = 0;
+
+ var p = [-1,1,1,-1,-1,1,1,-1,-1,1,1,-1,-1,1,1,-1];
+ var q = [-1,-1,1,1,-1,-1,1,1,-1,-1,1,1,-1,-1,1,1];
+ var r = [-1,-1,-1,-1,1,1,1,1,-1,-1,-1,-1,1,1,1,1];
+ var t = [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1];
+ //var s = [1,1,1,1,1,1,1,1];
+console.log(p[0]);
+ var xh = [-10, 10, 10, -10, -10, 10, 10, -10, -10, 10, 10, -10, -10, 10, 10, -10];//場所は一緒のハズ
+ var yh = [-10, -10, 10, 10, -10, -10, 10, 10, -10, -10, 10, 10, -10, -10, 10, 10];
+ var zh = [0, 0, 0, 0, 10, 10, 10, 10, 0, 0, 0, 0, 10, 10, 10, 10];
+ //var t = [0,0,0,0,0,0,0,0,24,24,24,24,24,24,24,24];
+ var th = [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1];
+// var s = [1,1,3,1,1,3,1,1,1,1,3,1,1,3,1,1];//ｓだけ違うはず
+var sh = [2, 4, 6, 8, 1, 3, 4, 7, 6, 1, 9, 2, 8, 7, 1, 3];//ｓだけ違うはず
+
+//var si = [2, 4, 6, 8, 1, 3, 4, 7];
+//var si2 = [6, 1, 9, 2, 8, 7, 1, 3];////////ばしょは同じなので変数値のみ変更した したではsiとしている
+
+var ph = (2*x0 - xh[0] - xh[1])/(xh[1]- xh[0]);
+var qh = (2*y0 - yh[0] - yh[2])/(yh[2]- yh[0]);
+var rh = (2*z0 - zh[0] - zh[4])/(zh[4]- zh[0]);
+var thh = (2*t0 - th[0] - th[8])/(th[8]- th[0]);
+s0 = 0;
+for (var i = 0; i < xh.length; i++) {//    8 ten
+s0 = s0 + (1/16)*(1 + ph*p[i])*(1 + qh*q[i])*(1 + rh*r[i])*(1 + thh*t[i])*sh[i];// もとめたいSのはず
+}
+console.log(ph); console.log(qh); console.log(rh); console.log(thh);console.log(s0);
+//console.log(p);
+//console.log(p[0]);
+//console.log((1/16)*(1 + ph*p[0])*(1 + qh*q[0])*(1 + rh*r[0])*(1 + th*t[0])*sh[0]);
+//console.log(s0);
+//var xi = [0, 10, 10];
+//var yi = [0, 0, 10];
+//var zi = [0, 0, 0];
+//var si = [2, 4, 6];
+var geom16hokan = new THREE.Geometry();
+ //for (var i = 0; i < 3; i++) {
+geom16hokan.vertices.push(new THREE.Vector3(x0, y0, z0));
+  //  }
+geom16hokan.faces.push(new THREE.Face3(0, 1, 2));
+//for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(s0/smax, 1, 0.5);        
+        geom16hokan.colors.push( color );
+//        }
+var mat16hokandot = new THREE.ParticleBasicMaterial( {
+size : 2,// particleのサイズ
+vertexColors : true,
+  } );
+var geom16hokandot = new THREE.ParticleSystem(geom16hokan, mat16hokandot);
+  scene.add(geom16hokandot);
+  geom16hokandot.position.set(10-60,-30,0);
+
+renderer.render( scene, camera );
+
+//////////////////////////////////////////////////
+s0 = 0;
+var t0 = 0.1;
+var thh = (2*t0 - th[0] - th[8])/(th[8]- th[0]);
+for (var i = 0; i < xh.length; i++) {//    8 ten
+s0 = s0 + (1/16)*(1 + ph*p[i])*(1 + qh*q[i])*(1 + rh*r[i])*(1 + thh*t[i])*sh[i];// もとめたいSのはず
+}
+console.log(ph); console.log(qh); console.log(rh); console.log(thh);console.log(s0);
+var geom16hokan2 = new THREE.Geometry();
+geom16hokan2.vertices.push(new THREE.Vector3(x0, y0, z0));
+  //  }
+geom16hokan2.faces.push(new THREE.Face3(0, 1, 2));
+//for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(s0/smax, 1, 0.5);        
+        geom16hokan2.colors.push( color );
+//        }
+var mat16hokandot2 = new THREE.ParticleBasicMaterial( {
+size : 2,// particleのサイズ
+vertexColors : true,
+  } );
+var geom16hokandot2 = new THREE.ParticleSystem(geom16hokan2, mat16hokandot2);
+  scene.add(geom16hokandot2);
+  geom16hokandot2.position.set(20-60,-30,0);
+renderer.render( scene, camera );
+//////////////////////////////////////////////////
+s0 = 0;
+var t0 = 0.2;
+var thh = (2*t0 - th[0] - th[8])/(th[8]- th[0]);
+for (var i = 0; i < xh.length; i++) {//    8 ten
+s0 = s0 + (1/16)*(1 + ph*p[i])*(1 + qh*q[i])*(1 + rh*r[i])*(1 + thh*t[i])*sh[i];// もとめたいSのはず
+}
+console.log(ph); console.log(qh); console.log(rh); console.log(thh); console.log(s0);
+var geom16hokan3 = new THREE.Geometry();
+geom16hokan3.vertices.push(new THREE.Vector3(x0, y0, z0));
+  //  }
+geom16hokan3.faces.push(new THREE.Face3(0, 1, 2));
+//for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(s0/smax, 1, 0.5);        
+        geom16hokan3.colors.push( color );
+//        }
+var mat16hokandot3 = new THREE.ParticleBasicMaterial( {
+size : 2,// particleのサイズ
+vertexColors : true,
+  } );
+var geom16hokandot3 = new THREE.ParticleSystem(geom16hokan3, mat16hokandot3);
+  scene.add(geom16hokandot3);
+  geom16hokandot3.position.set(30-60,-30,0);
+renderer.render( scene, camera );
+//////////////////////////////////////////////////
+s0 = 0;
+var t0 = 0.3;
+var thh = (2*t0 - th[0] - th[8])/(th[8]- th[0]);
+for (var i = 0; i < xh.length; i++) {//    8 ten
+s0 = s0 + (1/16)*(1 + ph*p[i])*(1 + qh*q[i])*(1 + rh*r[i])*(1 + thh*t[i])*sh[i];// もとめたいSのはず
+}
+console.log(ph); console.log(qh); console.log(rh); console.log(thh); console.log(s0);
+var geom16hokan4 = new THREE.Geometry();
+geom16hokan4.vertices.push(new THREE.Vector3(x0, y0, z0));
+  //  }
+geom16hokan4.faces.push(new THREE.Face3(0, 1, 2));
+//for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(s0/smax, 1, 0.5);        
+        geom16hokan4.colors.push( color );
+//        }
+var mat16hokandot4 = new THREE.ParticleBasicMaterial( {
+size : 2,// particleのサイズ
+vertexColors : true,
+  } );
+var geom16hokandot4 = new THREE.ParticleSystem(geom16hokan4, mat16hokandot4);
+  scene.add(geom16hokandot4);
+  geom16hokandot4.position.set(40-60,-30,0);
+renderer.render( scene, camera );
+//////////////////////////////////////////////////
+s0 = 0;
+var t0 = 0.4;
+var thh = (2*t0 - th[0] - th[8])/(th[8]- th[0]);
+for (var i = 0; i < xh.length; i++) {//    8 ten
+s0 = s0 + (1/16)*(1 + ph*p[i])*(1 + qh*q[i])*(1 + rh*r[i])*(1 + thh*t[i])*sh[i];// もとめたいSのはず
+}
+console.log(ph); console.log(qh); console.log(rh); console.log(thh); console.log(s0);
+var geom16hokan5 = new THREE.Geometry();
+geom16hokan5.vertices.push(new THREE.Vector3(x0, y0, z0));
+  //  }
+geom16hokan5.faces.push(new THREE.Face3(0, 1, 2));
+//for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(s0/smax, 1, 0.5);        
+        geom16hokan5.colors.push( color );
+//        }
+var mat16hokandot5 = new THREE.ParticleBasicMaterial( {
+size : 2,// particleのサイズ
+vertexColors : true,
+  } );
+var geom16hokandot5 = new THREE.ParticleSystem(geom16hokan5, mat16hokandot5);
+  scene.add(geom16hokandot5);
+  geom16hokandot5.position.set(50-60,-30,0);
+renderer.render( scene, camera );
+//////////////////////////////////////////////////
+s0 = 0;
+var t0 = 0.5;
+var thh = (2*t0 - th[0] - th[8])/(th[8]- th[0]);
+for (var i = 0; i < xh.length; i++) {//    8 ten
+s0 = s0 + (1/16)*(1 + ph*p[i])*(1 + qh*q[i])*(1 + rh*r[i])*(1 + thh*t[i])*sh[i];// もとめたいSのはず
+}
+console.log(ph); console.log(qh); console.log(rh); console.log(thh); console.log(s0);
+var geom16hokan6 = new THREE.Geometry();
+geom16hokan6.vertices.push(new THREE.Vector3(x0, y0, z0));
+  //  }
+geom16hokan6.faces.push(new THREE.Face3(0, 1, 2));
+//for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(s0/smax, 1, 0.5);        
+        geom16hokan6.colors.push( color );
+//        }
+var mat16hokandot6 = new THREE.ParticleBasicMaterial( {
+size : 2,// particleのサイズ
+vertexColors : true,
+  } );
+var geom16hokandot6 = new THREE.ParticleSystem(geom16hokan6, mat16hokandot6);
+  scene.add(geom16hokandot6);
+  geom16hokandot6.position.set(60-60,-30,0);
+renderer.render( scene, camera );
+
+//////////////////////////////////////////////////
+s0 = 0;
+var t0 = 0.6;
+var thh = (2*t0 - th[0] - th[8])/(th[8]- th[0]);
+for (var i = 0; i < xh.length; i++) {//    8 ten
+s0 = s0 + (1/16)*(1 + ph*p[i])*(1 + qh*q[i])*(1 + rh*r[i])*(1 + thh*t[i])*sh[i];// もとめたいSのはず
+}
+console.log(ph); console.log(qh); console.log(rh); console.log(thh); console.log(s0);
+var geom16hokan7 = new THREE.Geometry();
+geom16hokan7.vertices.push(new THREE.Vector3(x0, y0, z0));
+  //  }
+geom16hokan7.faces.push(new THREE.Face3(0, 1, 2));
+//for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(s0/smax, 1, 0.5);        
+        geom16hokan7.colors.push( color );
+//        }
+var mat16hokandot7 = new THREE.ParticleBasicMaterial( {
+size : 2,// particleのサイズ
+vertexColors : true,
+  } );
+var geom16hokandot7 = new THREE.ParticleSystem(geom16hokan7, mat16hokandot7);
+  scene.add(geom16hokandot7);
+  geom16hokandot7.position.set(70-60,-30,0);
+renderer.render( scene, camera );
+//////////////////////////////////////////////////
+s0 = 0;
+var t0 = 0.7;
+var thh = (2*t0 - th[0] - th[8])/(th[8]- th[0]);
+for (var i = 0; i < xh.length; i++) {//    8 ten
+s0 = s0 + (1/16)*(1 + ph*p[i])*(1 + qh*q[i])*(1 + rh*r[i])*(1 + thh*t[i])*sh[i];// もとめたいSのはず
+}
+console.log(ph); console.log(qh); console.log(rh); console.log(thh); console.log(s0);
+var geom16hokan8 = new THREE.Geometry();
+geom16hokan8.vertices.push(new THREE.Vector3(x0, y0, z0));
+  //  }
+geom16hokan8.faces.push(new THREE.Face3(0, 1, 2));
+//for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(s0/smax, 1, 0.5);        
+        geom16hokan8.colors.push( color );
+//        }
+var mat16hokandot8 = new THREE.ParticleBasicMaterial( {
+size : 2,// particleのサイズ
+vertexColors : true,
+  } );
+var geom16hokandot8 = new THREE.ParticleSystem(geom16hokan8, mat16hokandot8);
+  scene.add(geom16hokandot8);
+  geom16hokandot8.position.set(80-60,-30,0);
+renderer.render( scene, camera );
+
+//////////////////////////////////////////////////
+s0 = 0;
+var t0 = 0.8;
+var thh = (2*t0 - th[0] - th[8])/(th[8]- th[0]);
+for (var i = 0; i < xh.length; i++) {//    8 ten
+s0 = s0 + (1/16)*(1 + ph*p[i])*(1 + qh*q[i])*(1 + rh*r[i])*(1 + thh*t[i])*sh[i];// もとめたいSのはず
+}
+console.log(ph); console.log(qh); console.log(rh); console.log(thh); console.log(s0);
+var geom16hokan9 = new THREE.Geometry();
+geom16hokan9.vertices.push(new THREE.Vector3(x0, y0, z0));
+  //  }
+geom16hokan9.faces.push(new THREE.Face3(0, 1, 2));
+//for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(s0/smax, 1, 0.5);        
+        geom16hokan9.colors.push( color );
+//        }
+var mat16hokandot9 = new THREE.ParticleBasicMaterial( {
+size : 2,// particleのサイズ
+vertexColors : true,
+  } );
+var geom16hokandot9 = new THREE.ParticleSystem(geom16hokan9, mat16hokandot9);
+  scene.add(geom16hokandot9);
+  geom16hokandot9.position.set(90-60,-30,0);
+renderer.render( scene, camera );
+//////////////////////////////////////////////////
+s0 = 0;
+var t0 = 0.9;
+var thh = (2*t0 - th[0] - th[8])/(th[8]- th[0]);
+for (var i = 0; i < xh.length; i++) {//    8 ten
+s0 = s0 + (1/16)*(1 + ph*p[i])*(1 + qh*q[i])*(1 + rh*r[i])*(1 + thh*t[i])*sh[i];// もとめたいSのはず
+}
+console.log(ph); console.log(qh); console.log(rh); console.log(thh); console.log(s0);
+var geom16hokan10 = new THREE.Geometry();
+geom16hokan10.vertices.push(new THREE.Vector3(x0, y0, z0));
+  //  }
+geom16hokan10.faces.push(new THREE.Face3(0, 1, 2));
+//for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(s0/smax, 1, 0.5);        
+        geom16hokan10.colors.push( color );
+//        }
+var mat16hokandot10 = new THREE.ParticleBasicMaterial( {
+size : 2,// particleのサイズ
+vertexColors : true,
+  } );
+var geom16hokandot10 = new THREE.ParticleSystem(geom16hokan10, mat16hokandot10);
+  scene.add(geom16hokandot10);
+  geom16hokandot10.position.set(100-60,-30,0);
+renderer.render( scene, camera );
+//////////////////////////////////////////////////
+s0 = 0;
+var t0 = 0.9;
+var thh = (2*t0 - th[0] - th[8])/(th[8]- th[0]);
+for (var i = 0; i < xh.length; i++) {//    8 ten
+s0 = s0 + (1/16)*(1 + ph*p[i])*(1 + qh*q[i])*(1 + rh*r[i])*(1 + thh*t[i])*sh[i];// もとめたいSのはず
+}
+console.log(ph); console.log(qh); console.log(rh); console.log(thh); console.log(s0);
+var geom16hokan11 = new THREE.Geometry();
+geom16hokan11.vertices.push(new THREE.Vector3(x0, y0, z0));
+  //  }
+geom16hokan11.faces.push(new THREE.Face3(0, 1, 2));
+//for (var i = 0; i < 3; i++) {
+        color = new THREE.Color(0xffffff);
+        color.setHSL(s0/smax, 1, 0.5);        
+        geom16hokan11.colors.push( color );
+//        }
+var mat16hokandot11 = new THREE.ParticleBasicMaterial( {
+size : 2,// particleのサイズ
+vertexColors : true,
+  } );
+var geom16hokandot11 = new THREE.ParticleSystem(geom16hokan11, mat16hokandot11);
+  scene.add(geom16hokandot11);
+  geom16hokandot11.position.set(110-60,-30,0);
+renderer.render( scene, camera );
+
+
+
+
+
+
+renderer.render( scene, camera );
+
+};
+ 
+
+
+
+
+
+
+
+
+
+window.addEventListener( 'DOMContentLoaded', main, false );
+</script>
+
+
+</body>
+</html>
